@@ -6,7 +6,7 @@ node_modules/
 android/
 ios/
 config 
-
+config.env
 
 # Expo
 .expo/

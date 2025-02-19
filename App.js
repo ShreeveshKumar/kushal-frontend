@@ -23,6 +23,8 @@ import ScheduleCard from './pages/schedule/ScheduleCard';
 import FeedbackScreen from './pages/feedback/feedback';
 import FAQScreen from './pages/FAQ/faq';
 import AddVehicleScreen from './pages/vehicle/vehicleadd';
+import PaymentcontinueScreen from './pages/customer/Balance/PaymentScreen';
+import TaskView from './pages/schedule/Taskupdate';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -49,8 +51,20 @@ function BalanceStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Balance" component={BalanceScreen} />
+      <Stack.Screen name="Paymentcontinue" component={PaymentcontinueScreen} />
+
     </Stack.Navigator>
   );
+}
+
+
+function ScheduleStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Schedule" component={ScheduleCard} />
+      <Stack.Screen name="Taskprogress" component={TaskView} />
+    </Stack.Navigator>
+  )
 }
 
 
@@ -65,13 +79,6 @@ function SettingsStack() {
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
       <Stack.Screen name="Addcar" component={AddVehicleScreen} />
       <Stack.Screen name="Viewcar" component={Vehiclelist} />
-
-
-
-
-
-
-
     </Stack.Navigator>
   );
 }
@@ -97,7 +104,7 @@ function RootTabs() {
           <AntDesign name="home" size={size} color={color} />
         ),
       }} />
-      <Tab.Screen name="Schedule" component={ScheduleCard} />
+      <Tab.Screen name="Schedule" component={ScheduleStack} />
 
       <Tab.Screen name="Balance" component={BalanceStack} options={{
         tabBarIcon: ({ color, size }) => (
@@ -121,10 +128,14 @@ function CustomRootTabs() {
       <Stack.Navigator initialRouteName='Loader' screenOptions={{
         headerShown: false
       }}>
+        <Stack.Screen name="Addcar" component={AddVehicleScreen} />
+
         <Stack.Screen name="Loader" component={LoaderScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="HomeScreen" component={RootTabs} />
+        <Stack.Screen name="Paymentcontinue" component={PaymentcontinueScreen} />
+
       </Stack.Navigator>
     </>
 

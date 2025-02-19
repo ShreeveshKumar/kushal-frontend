@@ -16,7 +16,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { slottimes, occurrence } from "../../../data";
 // import "../../../loader/loader.css";
-
+import DropDownPicker from 'react-native-dropdown-picker';
+import axios from "axios";
 
 function WashForm() {
     const navigation = useNavigation();
@@ -30,6 +31,8 @@ function WashForm() {
     const [userToken, setToken] = useState("");
     const [formData, setdata] = useState("");
     const [isloaded, setloaded] = useState(false);
+    const [selectedcar, setselectedcar] = useState("");
+    const [cars, setCars] = useState([]);
 
     async function pickimage() {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -48,20 +51,46 @@ function WashForm() {
         }
     }
 
+
+
+    const getVehicles = async () => {
+        try {
+            const token = await AsyncStorage.getItem(("user"));
+            const userinfo = JSON.parse(token);
+            const response = await axios.get("http://172.17.0.1:8000/api/vehicle/getvehicle", {
+                headers: {
+                    Authorization: `Breare ${userinfo.token}`
+                }
+            })
+
+            if (response.status) {
+                const user = response.data;
+                console.log(user);
+
+                setCars(user.vehicles);
+            }
+
+
+        } catch (err) {
+            console.log(err.message);
+
+        }
+    }
+
     async function fetchUser() {
         try {
 
-            const token = await AsyncStorage.getItem("token");
-            const response = await fetch("http://172.17.0.1:8000/api/user/get-user", {
-                method: "POST",
+            const token = await AsyncStorage.getItem(("user"));
+            const user = JSON.parse(token);
+            const response = await axios.get("http://172.17.0.1:8000/api/get-info-owner", {
                 headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
                 },
             });
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            const data = await response.json();
-            setUserinfo(data.info || {});
+            const userinfo = response.data;
+            console.log("Data is ", userinfo.data);
+
+            setUserinfo(userinfo.data || {});
         } catch (err) {
             console.log(err.message);
         }
@@ -76,13 +105,32 @@ function WashForm() {
     // }, [specialArea, day, slot, selectedOccurrence]);
 
     function submitForm() {
-        navigation.navigate("selectwasher", { formData });
+        console.log(formData);
+
+        const formData = {
+            vehicle: selectedcar,
+            specialArea,
+            day,
+            occurrence: selectedOccurrence,
+            slot:selectedSlot,
+            selectedcar,
+        };
+
+        navigation.navigate("WasherSelection", { formData });
     }
+
+
+    useEffect(() => {
+        getVehicles();
+        fetchUser();
+    }, [])
+
+    const [opendrp, setopendrp] = useState(false);
 
     return (
         isloaded ? (
             <>
-             <View style={tw`h-full w-full`} className="loader"></View>
+                <View style={tw`h-full w-full`} className="loader"></View>
             </>
         ) : (
             <ScrollView style={tw`bg-white`}>
@@ -100,74 +148,95 @@ function WashForm() {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Form Inputs */}
-                    <View style={tw`p-6`}>
-                        <Text style={tw`text-lg font-semibold mb-2`}>Description</Text>
-                        <TextInput
-                            style={tw`border border-gray-300 p-4 rounded-lg bg-white mb-4`}
-                            placeholder="Enter details for the special area"
-                            value={specialArea}
-                            placeholderTextColor="grey"
-                            multiline
-                            onChangeText={setSpecialArea}
-                        />
 
-                        <Text style={tw`text-lg font-semibold mb-2`}>Day</Text>
-                        <TextInput
-                            style={tw`border border-gray-300 p-4 rounded-lg bg-white mb-4`}
-                            placeholder="Enter the day"
-                            value={day}
-                            onChangeText={setDay}
+                    <View>
+                        <Text>Select your car</Text>
+                        <DropDownPicker
+                            open={opendrp}
+                            value={selectedcar}
+                            items={cars.map((car) => ({
+                                label: car.vehiclename,
+                                value: car.vehiclename,
+                                license: car.license,
+                            }))}
+                            setOpen={setopendrp}
+                            setItems={setCars}
+                            setValue={setselectedcar}
+                            placeholder="Select a car"
+                            dropDownStyle={{ backgroundColor: "#fafafa" }} // Dropdown styling
                         />
+                    </View>
 
-                        <Text style={tw`text-lg font-semibold mb-2`}>Occurrence</Text>
-                        {occurrence.map((data) => (
+
+                </View>
+
+                {/* Form Inputs */}
+                <View style={tw`p-6`}>
+                    <Text style={tw`text-lg font-semibold mb-2`}>Description</Text>
+                    <TextInput
+                        style={tw`border border-gray-300 p-4 rounded-lg bg-white mb-4`}
+                        placeholder="Enter details for the special area"
+                        value={specialArea}
+                        placeholderTextColor="grey"
+                        multiline
+                        onChangeText={setSpecialArea}
+                    />
+
+                    <Text style={tw`text-lg font-semibold mb-2`}>Day</Text>
+                    <TextInput
+                        style={tw`border border-gray-300 p-4 rounded-lg bg-white mb-4`}
+                        placeholder="Enter the day"
+                        value={day}
+                        onChangeText={setDay}
+                    />
+
+                    <Text style={tw`text-lg font-semibold mb-2`}>Occurrence</Text>
+                    {occurrence.map((data) => (
+                        <TouchableOpacity
+                            key={data.id}
+                            onPress={() => setSelectedOccurrence(data.option)} // Set the selected option
+                            style={[
+                                tw`p-4 rounded-lg m-2`,
+                                selectedOccurrence === data.option ? styles.active : styles.inactive, // Compare with data.option
+                            ]}
+                        >
+                            <Text style={tw`text-center text-white`}>{data.option}</Text>
+                        </TouchableOpacity>
+                    ))}
+
+
+                    <Text style={tw`text-lg font-semibold mb-2`}>Slot</Text>
+                    <View style={tw`flex flex-row flex-wrap justify-around`}>
+                        {slottimes.map((data) => (
                             <TouchableOpacity
                                 key={data.id}
-                                onPress={() => setSelectedOccurrence(data.option)} // Set the selected option
+                                onPress={() => {
+                                    setSelectedSlot(data.id);
+                                    setSlot(data.time);
+                                }}
                                 style={[
                                     tw`p-4 rounded-lg m-2`,
-                                    selectedOccurrence === data.option ? styles.active : styles.inactive, // Compare with data.option
+                                    selectedSlot === data.id ? styles.active : styles.inactive,
                                 ]}
                             >
-                                <Text style={tw`text-center text-white`}>{data.option}</Text>
+                                <Text style={tw`text-center text-white`}>{data.time}</Text>
                             </TouchableOpacity>
                         ))}
-
-
-                        <Text style={tw`text-lg font-semibold mb-2`}>Slot</Text>
-                        <View style={tw`flex flex-row flex-wrap justify-around`}>
-                            {slottimes.map((data) => (
-                                <TouchableOpacity
-                                    key={data.id}
-                                    onPress={() => {
-                                        setSelectedSlot(data.id);
-                                        setSlot(data.time);
-                                    }}
-                                    style={[
-                                        tw`p-4 rounded-lg m-2`,
-                                        selectedSlot === data.id ? styles.active : styles.inactive,
-                                    ]}
-                                >
-                                    <Text style={tw`text-center text-white`}>{data.time}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-
-
-                        <Text style={tw`text-lg font-semibold mb-2`}>Personal Details</Text>
-                        <View style={tw`p-4 rounded-lg bg-gray-100`}>
-                            <Text>Name: {userinfo.username || "N/A"}</Text>
-                            <Text>Phone: {userinfo.phone || "N/A"}</Text>
-                            <Text>Address: {userinfo.address || "N/A"}</Text>
-                        </View>
-
-                        <TouchableOpacity onPress={submitForm} style={tw`bg-black p-4 rounded-lg mt-6`}>
-                            <Text style={tw`text-white text-center text-lg`}>Continue</Text>
-                        </TouchableOpacity>
                     </View>
+
+
+                    <Text style={tw`text-lg font-semibold mb-2`}>Personal Details</Text>
+                    <View style={tw`p-4 rounded-lg bg-gray-100`}>
+                        <Text>Name: {userinfo.username || "N/A"}</Text>
+                        <Text>Phone: {userinfo.email || "N/A"}</Text>
+                        <Text>Address: {userinfo.address || "N/A"}</Text>
+                    </View>
+
+                    <TouchableOpacity onPress={submitForm} style={tw`bg-black p-4 rounded-lg mt-6`}>
+                        <Text style={tw`text-white text-center text-lg`}>Continue</Text>
+                    </TouchableOpacity>
                 </View>
-            </ScrollView>
+            </ScrollView >
         )
     )
 }

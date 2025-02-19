@@ -144,120 +144,118 @@ function CustomerHomeScreen() {
 
 
     return (
-        isOwner ? (
-            <>
-                <SafeAreaView>
-                    <ActivityIndicator />
-                </SafeAreaView>
-            </>
-        ) : (
-            <>
-                <SafeAreaView style={tw`flex-1 `}>
+        <>
+            <SafeAreaView style={tw`flex-1 `}>
 
-                    <KeyboardAvoidingView
-                        style={tw`flex bg-white`}
-                        behavior={Platform.OS === "ios" ? "padding" : "height"}
-                    >
+                <KeyboardAvoidingView
+                    style={tw`flex bg-white`}
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                >
 
-                        <ScrollView contentContainerStyle={tw` flex-grow`} showsVerticalScrollIndicator={false}>
-                            <View style={tw`flex flex-row justify-between ml-5 mt-15`}>
-                                <Text style={tw`text-3xl font-semibold`}>Welcome</Text>
+                    <ScrollView contentContainerStyle={tw` flex-grow`} showsVerticalScrollIndicator={false}>
+                        <View style={tw`flex flex-row justify-between ml-5 mt-2`}>
+                            <Text style={tw`text-3xl font-semibold`}>Welcome</Text>
 
 
-                                <View style={tw`flex flex-row `}>
-                                    <TouchableOpacity onPress={() => navigation.navigate("Tips")}>
+                            <View style={tw`flex flex-row `}>
+                                <TouchableOpacity onPress={() => navigation.navigate("Tips")}>
 
-                                        <AntDesign name="pushpino" size={24} color="black" />
-                                    </TouchableOpacity>
+                                    <AntDesign name="pushpino" size={24} color="black" />
+                                </TouchableOpacity>
 
 
-                                    <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
+                                <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
 
-                                        <Ionicons name="notifications" size={24} color="black" style={tw`mx-5 `} />
-                                    </TouchableOpacity>
-                                </View>
-
+                                    <Ionicons name="notifications" size={24} color="black" style={tw`mx-5 `} />
+                                </TouchableOpacity>
                             </View>
 
+                        </View>
 
-                            <View style={tw`flex flex-row align-middle justify-center bg-slate-200 p-5 mx-5 my-3 rounded-xl`}>
-                                <Text style={tw`bold text-sm`}>Continue accepting orders ?</Text>
+                        {
+                            !isOwner ? (
+                                <>
+                                    <View style={tw`flex flex-row align-middle justify-center bg-slate-200 p-5 mx-5 my-3 rounded-xl`}>
+                                        <Text style={tw`bold text-md text-bold `}>Continue accepting orders ?</Text>
 
-                                <ToggleSwitch
-                                    isOn={isaccept}
-                                    onColor="blue"
-                                    offColor="red"
-                                    label={isaccept ? "On" : "Off"}
-                                    labelStyle={{ color: "black", fontWeight: "900" }}
-                                    size="large"
-                                    onToggle={() => handleAccept()}
-                                />
+                                        <ToggleSwitch
+                                            isOn={isaccept}
+                                            onColor="blue"
+                                            offColor="red"
+                                            label={isaccept ? "On" : "Off"}
+                                            labelStyle={{ color: "black", fontWeight: "900" }}
+                                            size="small"
+                                            onToggle={() => handleAccept()}
+                                        />
 
-                            </View>
+                                    </View>
+                                </>
+                            ) : (null)
+                        }
 
 
-                            <ImageBackground
-                                source={{ uri: "https://cdni.iconscout.com/illustration/premium/thumb/taxi-service-illustration-download-in-svg-png-gif-file-formats--car-booking-application-book-cab-travel-pack-holidays-illustrations-9530586.png" }}
-                                resizeMode="cover"
-                                style={tw`w-full h-64`}
+
+                        <ImageBackground
+                            source={{ uri: "https://cdni.iconscout.com/illustration/premium/thumb/taxi-service-illustration-download-in-svg-png-gif-file-formats--car-booking-application-book-cab-travel-pack-holidays-illustrations-9530586.png" }}
+                            resizeMode="cover"
+                            style={tw`w-full h-64`}
+                        />
+                        {
+                            isOwner ? (
+                                <>
+                                    <NavigateButton text="Add your car wash here" page="WashForm" />
+
+                                </>) : (
+                                <>
+                                    <NavigateButton text="See your schedule today" page="ScheduleCard" />
+
+                                </>
+                            )
+
+                        }
+
+
+                        <View style={tw`p-5`}>
+                            <Text style={[tw`text-black text-xl mb-3`]}>Scheduled Tasks</Text>
+                            <FlatList
+                                data={pendingTasks}
+                                renderItem={renderTask}
+                                keyExtractor={(item) => item.id}
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                nestedScrollEnabled={true}
                             />
-                            {
-                                isOwner ? (
-                                    <>
-                                        <NavigateButton text="Add your car wash here" page="WashForm" />
-
-                                    </>) : (
-                                    <>
-                                        <NavigateButton text="See your schedule today" page="ScheduleCard" />
-
-                                    </>
-                                )
-
-                            }
+                        </View>
 
 
-                            <View style={tw`p-5`}>
-                                <Text style={[tw`text-black text-xl mb-3`]}>Scheduled Tasks</Text>
-                                <FlatList
-                                    data={pendingTasks}
-                                    renderItem={renderTask}
-                                    keyExtractor={(item) => item.id}
-                                    horizontal
-                                    showsHorizontalScrollIndicator={false}
-                                    nestedScrollEnabled={true}
-                                />
-                            </View>
+                        <View style={tw`w-full my-4 overflow-hidden `}>
+                            <Banner
+                                backgroundUri="https://www.shutterstock.com/image-vector/car-cartoon-banner-260nw-1312346801.jpg"
+                                heading=""
+                                subHeading=""
+                            />
+                        </View>
 
 
-                            <View style={tw`w-full my-4 overflow-hidden `}>
-                                <Banner
-                                    backgroundUri="https://www.shutterstock.com/image-vector/car-cartoon-banner-260nw-1312346801.jpg"
-                                    heading=""
-                                    subHeading=""
-                                />
-                            </View>
+                        <View style={tw`p-5`}>
+                            <Text style={[tw`text-black text-xl mb-3`]}>Completed Tasks</Text>
+                            <FlatList
+                                data={completedTasks}
+                                renderItem={renderTask}
+                                keyExtractor={(item) => item.id}
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                nestedScrollEnabled={true}
+                            />
+                        </View>
 
-
-                            <View style={tw`p-5`}>
-                                <Text style={[tw`text-black text-xl mb-3`]}>Completed Tasks</Text>
-                                <FlatList
-                                    data={completedTasks}
-                                    renderItem={renderTask}
-                                    keyExtractor={(item) => item.id}
-                                    horizontal
-                                    showsHorizontalScrollIndicator={false}
-                                    nestedScrollEnabled={true}
-                                />
-                            </View>
-
-                            <RatingComponent />
-                            <Footer backgroundImageUri="https://img.pikbest.com/ai/illus_our/20230427/59f10732ce81427c6ecd242c2eed0b0f.jpg" heading="We are with you in every moment " description="Contact now" />
-                        </ScrollView>
-                    </KeyboardAvoidingView>
-                </SafeAreaView>
-            </>
-        )
-    );
+                        <RatingComponent />
+                        <Footer backgroundImageUri="https://img.pikbest.com/ai/illus_our/20230427/59f10732ce81427c6ecd242c2eed0b0f.jpg" heading="We are with you in every moment " description="Contact now" />
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </SafeAreaView>
+        </>
+    )
 };
 
 export default CustomerHomeScreen;

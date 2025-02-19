@@ -1,81 +1,67 @@
-import { View, Text, TouchableOpacity } from 'react-native';
-import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React from 'react';
 import CreditCardUI from '../../../components/Creditcard/Creditcard';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from 'twrnc';
-import RazorpayCheckout from 'react-native-razorpay';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import handleConfig from '../../../config/razorpay.config';
-
-
-// const response = await fetch('https://your-backend.com/create-order', {
-//     method: 'POST',
-//     headers: { 'Content-Type': 'application/json' },
-//     body: JSON.stringify({ amount: 500, currency: 'INR' })
-// });
+import { useNavigation } from '@react-navigation/native';
 
 const BalanceScreen = () => {
+    const navigation = useNavigation();
 
-
-    const getuserinfo = async () => {
-        try {
-            const userresult = await AsyncStorage.getItem("user");
-            const userdata = JSON.parse(userresult);
-            const response = await axios.get("http://172.17.0.1:8000/api/profile", {
-                headers: {
-                    'Authorization': `Bearer ${userdata.token}`,
-                }
-            })
-            const userInfo = response.data;
-            console.log(userInfo);
-
-            // const 
-            // console.log(userobject);
-
-            const thispayment = handleConfig({ amount: 100, userinfo: { email: userInfo.email, contact: userInfo.username, name: userInfo.username } });
-            console.log(thispayment);
-
-            RazorpayCheckout.open(thispayment)
-                .then((data) => {
-                    console.log(data);
-
-                    console.log(`Payment Success: ${data.razorpay_payment_id}`);
-                    alert(`Payment Successful! Payment ID: ${data.razorpay_payment_id}`);
-                })
-                .catch((error) => {
-                    console.log(error);
-
-                    console.log(`Payment Error: ${error.code} | ${error.description}`);
-                    alert(`Payment Failed: ${error.description}`);
-                });
-
-        } catch (err) {
-            console.log(err.message);
-        }
-    }
-
-
-    // useEffect(() => {
-    //     getuserinfo();
-    // }, [])
-
+    const handleProceedToPayment = (amount) => {
+        console.log(amount);
+        navigation.navigate("Paymentcontinue", { amount });
+    };
 
     return (
         <SafeAreaView>
-            <View style={tw` justify-center items-center  `}>
-                <CreditCardUI />
-            </View>
+            <ScrollView>
+                <View style={tw`justify-center items-center`}>
+                    <CreditCardUI />
+                </View>
 
+                <View style={tw`m-5`}>
+                    <Text style={tw`text-3xl font-semibold`}>Recharge</Text>
 
-            <View style={tw`bg-blue-300 mt-2`}>
-                <TouchableOpacity style={tw``} onPress={getuserinfo}>
+                    <View style={tw`flex flex-row justify-around mb-2`}>
+                        <TouchableOpacity
+                            style={tw`bg-black text-white p-4 rounded-lg`}
+                            onPress={() => handleProceedToPayment(250)}
+                        >
+                            <Text style={tw`text-white`}>Mini Suv 250</Text>
+                        </TouchableOpacity>
 
-                    <Text style={tw`text-center `}>Hello </Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
-    )
-}
+                        <TouchableOpacity
+                            style={tw`bg-black text-white p-4 rounded-lg`}
+                            onPress={() => handleProceedToPayment(700)}
+                        >
+                            <Text style={tw`text-white`}>Suv 700</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={tw`flex flex-row justify-around`}>
+                        <TouchableOpacity
+                            style={tw`bg-black text-white p-4 rounded-lg`}
+                            onPress={() => handleProceedToPayment(600)}
+                        >
+                            <Text style={tw`text-white`}>Hatchback 600</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={tw`bg-black text-white p-4 rounded-lg`}
+                            onPress={() => handleProceedToPayment(650)}
+                        >
+                            <Text style={tw`text-white`}>Sedan 650</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                <View>
+                    <Text style={tw`text-3xl font-semibold`}>Recharge History</Text>
+                </View>
+            </ScrollView>
+        </SafeAreaView >
+    );
+};
 
 export default BalanceScreen;

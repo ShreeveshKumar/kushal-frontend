@@ -7,6 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "jsEngine": "hermes",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -17,18 +18,18 @@
       "bundleIdentifier": "com.anonymous.client"
     },
     "android": {
+      "package":"com.carcare.client",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.carcare.client"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "1f944b76-dee7-45ce-8c47-c1163c5e9e99"
+        "projectId": "173b14ac-2a71-4730-a4ce-89440a73e67a"
       }
     }
   }

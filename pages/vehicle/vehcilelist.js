@@ -1,32 +1,43 @@
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, TouchableOpacity } from 'react-native';
 import tw from 'twrnc';
+import { useNavigation } from '@react-navigation/native';
 
 const Vehiclelist = () => {
-  const [cars, setCars] = useState([
-    {
-      id: '1',
-      licenseNumber: 'ABC123',
-      carPicture: 'https://via.placeholder.com/150',
-      lastServiced: '2025-01-01',
-    },
-    {
-      id: '2',
-      licenseNumber: 'XYZ789',
-      carPicture: 'https://via.placeholder.com/150',
-      lastServiced: '2024-12-15',
-    },
-  ]);
+  const [cars, setCars] = useState([]);
+  const navigation = useNavigation();
 
-  const addNewCar = () => {
-    const newCar = {
-      id: `${cars.length + 1}`,
-      licenseNumber: `NEW${Math.floor(Math.random() * 1000)}`,
-      carPicture: 'https://via.placeholder.com/150',
-      lastServiced: new Date().toISOString().split('T')[0],
-    };
-    setCars([...cars, newCar]);
-  };
+
+  const getVehicles = async () => {
+    try {
+      const token = await AsyncStorage.getItem(("user"));
+      const userinfo = JSON.parse(token);
+      const response = await axios.get("http://172.17.0.1:8000/api/vehicle/getvehicle", {
+        headers: {
+          Authorization: `Breare ${userinfo.token}`
+        }
+      })
+
+      if (response.status) {
+        const user = response.data;
+        console.log(user);
+
+        setCars(user.vehicles);
+      }
+
+
+    } catch (err) {
+      console.log(err.message);
+
+    }
+  }
+
+  useEffect(() => {
+    getVehicles();
+  });
+
 
   const renderCarCard = ({ item }) => (
     <View style={tw`bg-white p-4 rounded-lg shadow-lg mb-4`}>
@@ -35,8 +46,8 @@ const Vehiclelist = () => {
         style={tw`w-full h-40 rounded-lg mb-3`}
       />
 
-      <Text style={tw`text-lg font-bold`}>License Number: {item.licenseNumber}</Text>
-      <Text style={tw`text-base text-gray-600`}>Last Serviced: {item.lastServiced}</Text>
+      <Text style={tw`text-lg font-bold`}>License Number: {item.license}</Text>
+      <Text style={tw`text-base text-gray-600`}>Last Serviced: {item.lastserviced}</Text>
     </View>
   );
 
@@ -51,7 +62,7 @@ const Vehiclelist = () => {
 
       <TouchableOpacity
         style={tw`bg-blue-500 p-4 rounded-full absolute bottom-5 right-5 shadow-lg`}
-        onPress={addNewCar}
+        onPress={() => navigation.navigate('Addcar')}
       >
         <Text style={tw`text-white text-lg font-bold text-center`}>+ Add Car</Text>
       </TouchableOpacity>

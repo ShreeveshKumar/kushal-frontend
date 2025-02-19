@@ -3,6 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import tw from 'twrnc';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const WasherSelectionScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -10,31 +11,30 @@ const WasherSelectionScreen = ({ route }) => {
   const [washer, setWashers] = useState([]);
   const [selectedWasher, setSelectedWasher] = useState(null);
   const [selectedOwner, setSelectedowner] = useState(null);
-  const [isWasher, setWasher] = useState[(null)];
+  const [isWasher, setWasher] = useState(null);
 
   async function fetchUser() {
     try {
 
-      const token = await AsyncStorage.getItem("token");
-      const response = await fetch("http://172.17.0.1:8000/api/user/get-user", {
-        method: "POST",
+      const token = await AsyncStorage.getItem(("user"));
+      const user = JSON.parse(token);
+      const response = await axios.get("http://172.17.0.1:8000/api/get-info-owner", {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
         },
       });
-      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-      const data = await response.json();
-      setSelectedowner(data.info._id || {});
-      console.log(selectedOwner);
+      const userinfo = response.data;
+      console.log("Data is ", userinfo.data);
 
+      setSelectedowner(userinfo.data._id || {});
     } catch (err) {
       console.log(err.message);
     }
   }
 
   const handleSelect = (washer) => {
-    const { formData } = route.params;
+
+
     setSelectedWasher(washer._id); // Use _id for selection
     Alert.alert('Washer Selected', `You selected ${washer.username}`);
   };
@@ -44,9 +44,10 @@ const WasherSelectionScreen = ({ route }) => {
       Alert.alert('No Washer Selected', 'Please select a washer first.');
       return;
     }
+    const { formData } = route.params;
+    console.log(formData);
 
-
-    console.log(selectedWasher);
+    console.log("washer is ", selectedWasher);
 
     const dataToSend = {
       formData: formData,
@@ -54,17 +55,14 @@ const WasherSelectionScreen = ({ route }) => {
       ownerId: selectedOwner
     };
 
-    try {
-      const response = await fetch("http://172.17.0.1:8000/api/user/post-task", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dataToSend),
-      });
+    console.log("Data to ve sent is " , dataToSend);
 
-      const result = await response.json();
-      console.log(result);
+    try {
+      const response = await axios.post("http://172.17.0.1:8000/api/user/post-task", dataToSend)
+      console.log(dataToSend);
+
+      const result = response.data;
+      console.log("this is the result ", result);
 
       if (!response.ok) {
         Alert.alert('Error', result.message || 'Something went wrong');
@@ -72,9 +70,9 @@ const WasherSelectionScreen = ({ route }) => {
 
       if (response.status === 200) {
         console.log("Task added successfully");
-        navigation.navigate("Homes")
-
+        navigation.navigate("HomeScreen")
       }
+
     } catch (error) {
       console.error('Error submitting washer selection:', error);
       Alert.alert('Error', 'Could not submit the selection');
@@ -91,7 +89,7 @@ const WasherSelectionScreen = ({ route }) => {
       });
       const data = await response.json();
       if (data && Array.isArray(data.users)) {
-        setWashers(data.users); // Assuming 'users' contains the washer list
+        setWashers(data.users); 
       } else {
         console.error("No users found in the response");
       }
@@ -100,10 +98,11 @@ const WasherSelectionScreen = ({ route }) => {
     }
   }
 
-  // useEffect(() => {
-  //   getwashers();
-  //   fetchUser();
-  // }, []);
+  useEffect(() => {
+    getwashers();
+    fetchUser();
+  }, []);
+
 
   const renderWasher = ({ item }) => (
     <View
@@ -134,7 +133,7 @@ const WasherSelectionScreen = ({ route }) => {
       <Text style={tw`text-xl font-bold text-center mb-4`}>Choose a Washer</Text>
       <FlatList
         data={washer}
-        keyExtractor={(item) => item._id}  // Use _id to uniquely identify washers
+        keyExtractor={(item) => item._id}  
         renderItem={renderWasher}
       />
       <TouchableOpacity onPress={handleSubmit} style={tw`bg-blue-400 p-3 rounded-lg text-xl text-center `}>
