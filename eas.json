@@ -5,16 +5,18 @@
   },
   "build": {
     "development": {
-      "developmentClient": true,
-      "distribution": "internal"
+      "android": {
+        "developmentClient": true,
+        "distribution": "internal"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "android": {
+        "distribution": "internal"
+      }
     },
     "production": {
-      "android": {
-        "workflow": "managed"
-      }
+      "android": {}
     }
   },
   "submit": {
