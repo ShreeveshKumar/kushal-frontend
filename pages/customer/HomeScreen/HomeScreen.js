@@ -26,58 +26,25 @@ import NavigateButton from '../../../components/Button/NavigateHomeScreen';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CheckBox } from 'react-native-elements';
 import ToggleSwitch from 'toggle-switch-react-native'
-
+import { useScheduleData } from 'hooks/useHomedata';
+import { useUserrole } from 'hooks/useUserrole';
 
 function CustomerHomeScreen() {
     const navigation = useNavigation();
     const [isOwner, setisOwner] = useState(false);
-    const [isratebox, setisratebox] = useState(false);
     const [isaccept, setisaccept] = useState(true);
+    const [pendingTasks, setPendingTasks] = useState([]);
+    const [completedTasks, setCompletedTasks] = useState([]);
+    const { data: scheduleData, isLoading: isScheduleLoading, error: scheduleError } = useScheduleData();
+    const { data: userRoleData, isLoading: isUserRoleLoading, error: userRoleError } = useUserrole();
 
-
-    const pendingTasks = [
-        {
-            id: "1",
-            name: "Car Wash",
-            donetill: "Done till 10:00 AM",
-            task: "Wash and clean car exterior and interior",
-        },
-        {
-            id: "2",
-            name: "Oil Change",
-            donetill: "Done till 1:30 PM",
-            task: "Replace engine oil and filter",
-        },
-        {
-            id: "3",
-            name: "Tire Check",
-            donetill: "Done till 4:00 PM",
-            task: "Inspect and inflate tires to proper pressure",
-        },
-        {
-            id: "4",
-            name: "Battery Maintenance",
-            donetill: "Done till 6:00 PM",
-            task: "Check and clean battery terminals",
-        },
-    ];
-
-    const completedTasks = [
-        {
-            id: "5",
-            name: "Battery Maintenance",
-            donetill: "Done till 6:00 PM",
-            task: "Check and clean battery terminals",
-        },
-        {
-            id: "6",
-            name: "Battery Maintenance",
-            donetill: "Done till 6:00 PM",
-            task: "Check and clean battery terminals",
-        },
-    ];
-
-
+    useEffect(() => {
+        if (userRoleData?.role === "washer") {
+            setisOwner(false);
+        } else {
+            setisOwner(true);
+        }
+    }, [userRoleData])
 
     const renderTask = ({ item }) => (
         <View style={tw`p-4 bg-gray-100 rounded-xl mr-4 shadow-md`}>
@@ -87,44 +54,8 @@ function CustomerHomeScreen() {
         </View>
     );
 
-
-    useEffect(() => {
-        handleUser();
-    }, [])
-
-
-    const handleUser = async () => {
-        try {
-            const result = await AsyncStorage.getItem("user");
-            const userdata = JSON.parse(result);
-            console.log(userdata);
-            console.log(userdata.role);
-            if (userdata.role === 'washer') {
-                setisOwner(false);
-            } else {
-                setisOwner(true);
-            }
-        } catch (err) {
-            console.log(err.message);
-        }
-    }
-
-    const setRole = async () => {
-        try {
-            const key = 'role';
-            await AsyncStorage.setItem(key, 'washer');
-            const storedRole = await AsyncStorage.getItem(key);
-            console.log(storedRole);
-            // setisOwner(false);
-        } catch (error) {
-            console.error('Error setting or retrieving the role:', error);
-        }
-    };
-
-
     const handleAccept = () => {
         try {
-
             setisaccept(prev => {
                 console.log(prev);
                 return !prev;
@@ -135,16 +66,33 @@ function CustomerHomeScreen() {
         }
     }
 
-
-
-
     useEffect(() => {
-        setRole();
-    }, [])
+        if (scheduleData) {
+            const pending = scheduleData.tasks
+                .filter(task => task.status === "pending")
+                .map((task, index) => ({
+                    id: index.toString(),
+                    name: "Car Wash Task",
+                    donetill: `Created at: ${new Date(task.createdAt).toLocaleString()}`,
+                    task: "Wash and clean car exterior and interior",
+                }));
+
+            const completed = scheduleData.tasks
+                .filter(task => task.status === "completed")
+                .map((task, index) => ({
+                    id: (index + pending.length).toString(),
+                    name: "Completed Task",
+                    donetill: `Created at: ${new Date(task.createdAt).toLocaleString()}`,
+                    task: "Completed task description",
+                }));
+
+            setPendingTasks(pending);
+            setCompletedTasks(completed);
+        }
+    }, [scheduleData]);
 
 
     return (
-        <>
             <SafeAreaView style={tw`flex-1 `}>
 
                 <KeyboardAvoidingView
@@ -217,6 +165,7 @@ function CustomerHomeScreen() {
 
                         <View style={tw`p-5`}>
                             <Text style={[tw`text-black text-xl mb-3`]}>Scheduled Tasks</Text>
+
                             <FlatList
                                 data={pendingTasks}
                                 renderItem={renderTask}
@@ -254,7 +203,6 @@ function CustomerHomeScreen() {
                     </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>
-        </>
     )
 };
 

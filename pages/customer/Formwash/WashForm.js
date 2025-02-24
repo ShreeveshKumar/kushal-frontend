@@ -59,7 +59,7 @@ function WashForm() {
             const userinfo = JSON.parse(token);
             const response = await axios.get("http://172.17.0.1:8000/api/vehicle/getvehicle", {
                 headers: {
-                    Authorization: `Breare ${userinfo.token}`
+                    Authorization: `Bearer ${userinfo.token}`
                 }
             })
 

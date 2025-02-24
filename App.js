@@ -5,29 +5,32 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import LoginScreen from './pages/login/Login';
-import Signup from './pages/signup/Signup';
-import CustomerHomeScreen from './pages/customer/HomeScreen/HomeScreen';
-import WashForm from './pages/customer/Formwash/WashForm';
-import Settings from './pages/Settings/Settings';
-import WashFormReadOnly from './pages/customer/Formwash/ShowWashForm';
-import WasherSelectionScreen from './pages/customer/menu/washerMenu';
-import Vehiclelist from './pages/vehicle/vehcilelist';
-import UserProfile from './pages/profile/Userprofile';
-import BalanceScreen from './pages/customer/Balance/BalanceScreen';
-import Notificationuser from './pages/Notifications/Notificationuser';
+import LoginScreen from '@pages/login/Login';
+import Signup from '@pages/signup/Signup';
+import CustomerHomeScreen from '@pages/customer/HomeScreen/HomeScreen';
+import WashForm from '@pages/customer/Formwash/WashForm';
+import Settings from '@pages/Settings/Settings';
+import WashFormReadOnly from '@pages/customer/Formwash/ShowWashForm';
+import WasherSelectionScreen from '@pages/customer/menu/washerMenu';
+import Vehiclelist from '@pages/vehicle/vehcilelist';
+import UserProfile from '@pages/profile/Userprofile';
+import BalanceScreen from '@pages/customer/Balance/BalanceScreen';
+import Notificationuser from '@pages/Notifications/Notificationuser';
 import TipsScreen from './components/Tips/Tipscreen';
-import LoaderScreen from './pages/Welcome/Loader';
-import ScheduleCard from './pages/schedule/ScheduleCard';
-import FeedbackScreen from './pages/feedback/feedback';
-import FAQScreen from './pages/FAQ/faq';
-import AddVehicleScreen from './pages/vehicle/vehicleadd';
-import PaymentcontinueScreen from './pages/customer/Balance/PaymentScreen';
-import TaskView from './pages/schedule/Taskupdate';
+import LoaderScreen from '@pages/Welcome/Loader';
+import ScheduleCard from '@pages/schedule/ScheduleCard';
+import FeedbackScreen from '@pages/feedback/feedback';
+import FAQScreen from '@pages/FAQ/faq';
+import AddVehicleScreen from '@pages/vehicle/vehicleadd';
+import PaymentcontinueScreen from '@pages/customer/Balance/PaymentScreen';
+import TaskView from '@pages/schedule/Taskupdate';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+const queryClient = new QueryClient();
 
 function CustomerHomeStack() {
   return (
@@ -144,8 +147,10 @@ function CustomRootTabs() {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <CustomRootTabs />
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <CustomRootTabs />
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }

@@ -18,11 +18,12 @@
       "bundleIdentifier": "com.anonymous.client"
     },
     "android": {
-      "package":"com.carcare.client",
+      "package": "com.carcare.client",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "useCleartextTraffic": true 
     },
     "web": {
       "favicon": "./assets/favicon.png"

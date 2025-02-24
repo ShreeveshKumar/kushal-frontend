@@ -12,13 +12,15 @@ const api = axios.create
 
 api.interceptors.request.use(
     async (config) => {
-        const user = await AsyncStorage.getItem(("users"));
+        const user = await AsyncStorage.getItem("user");
 
         if (user) {
-            const usertoken = JSON.parse(user.token);
+            const userinfo = JSON.parse(user);
+            console.log("token found",userinfo.token);
+            
 
-            if (usertoken) {
-                config.headers.Authorization = `Bearer ${usertoken}`;
+            if (userinfo.token) {
+                config.headers.Authorization = `Bearer ${userinfo.token}`;
             }
 
         }
