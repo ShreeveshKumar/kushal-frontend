@@ -8,10 +8,6 @@
       "android": {
         "developmentClient": true,
         "distribution": "internal"
-      },
-      "ios": {
-        "developmentClient": true,
-        "distribution": "internal"
       }
     },
     "preview": {

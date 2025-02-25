@@ -15,7 +15,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.client",
+      "bundleIdentifier": "com.anonymous.client"
+
     },
     "android": {
       "package": "com.carcare.client",
