@@ -35,9 +35,11 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: npx eas-cli build --platform android --profile production --non-interactive --no-wait
 
+      - name: Authenticate with Expo
+        run: echo "EXPO_TOKEN=${{ secrets.EAS_TOKEN }}" >> $GITHUB_ENV
+
       - name: Get Latest Build URL
         run: |
-          npx eas-cli login --token ${{ secrets.EAS_TOKEN }}
           BUILD_LIST=$(npx eas-cli build:list --json)
           
           if [ "$(echo "$BUILD_LIST" | jq length)" -eq 0 ]; then
@@ -49,6 +51,7 @@ jobs:
           BUILD_URL=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
 
           echo "BUILD_URL=$BUILD_URL" >> $GITHUB_ENV
+
 
       - name: Upload APK to GitHub Releases
         uses: softprops/action-gh-release@v1
