@@ -8,15 +8,26 @@
       "android": {
         "developmentClient": true,
         "distribution": "internal"
+      },
+      "ios": {
+        "developmentClient": true,
+        "distribution": "internal"
       }
     },
     "preview": {
       "android": {
         "distribution": "internal"
+      },
+      "ios": {
+        "distribution": "internal"
       }
     },
     "production": {
       "android": {
+        "autoIncrement": true
+      },
+      "ios": {
+        "credentialsSource": "local",
         "autoIncrement": true
       }
     }
