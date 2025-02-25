@@ -18,7 +18,7 @@ const WasherSelectionScreen = ({ route }) => {
 
       const token = await AsyncStorage.getItem(("user"));
       const user = JSON.parse(token);
-      const response = await axios.get("http://172.17.0.1:8000/api/get-info-owner", {
+      const response = await axios.get("https://kushal-backend.onrender.com/api/get-info-owner", {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
@@ -58,7 +58,7 @@ const WasherSelectionScreen = ({ route }) => {
     console.log("Data to ve sent is " , dataToSend);
 
     try {
-      const response = await axios.post("http://172.17.0.1:8000/api/user/post-task", dataToSend)
+      const response = await axios.post("https://kushal-backend.onrender.com/api/user/post-task", dataToSend)
       console.log(dataToSend);
 
       const result = response.data;
@@ -81,7 +81,7 @@ const WasherSelectionScreen = ({ route }) => {
 
   async function getwashers() {
     try {
-      const response = await fetch("http://172.17.0.1:8000/api/get-washer", {
+      const response = await fetch("https://kushal-backend.onrender.com/api/get-washer", {
         method: "GET",
         headers: {
           'Content-type': "application/json"

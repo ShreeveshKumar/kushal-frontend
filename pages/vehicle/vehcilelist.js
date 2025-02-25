@@ -14,7 +14,7 @@ const Vehiclelist = () => {
     try {
       const token = await AsyncStorage.getItem(("user"));
       const userinfo = JSON.parse(token);
-      const response = await axios.get("http://172.17.0.1:8000/api/vehicle/getvehicle", {
+      const response = await axios.get("https://kushal-backend.onrender.com/api/vehicle/getvehicle", {
         headers: {
           Authorization: `Breare ${userinfo.token}`
         }

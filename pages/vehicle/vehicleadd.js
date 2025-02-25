@@ -85,7 +85,7 @@ const AddVehicleScreen = () => {
       const userdetail = JSON.parse(user);
       console.log(userdetail.token);
 
-      const response = await axios.post("http://172.17.0.1:8000/api/vehicle/addvehicle", newVehicle, {
+      const response = await axios.post("https://kushal-backend.onrender.com/api/vehicle/addvehicle", newVehicle, {
         headers: {
           'Authorization': `Bearer ${userdetail.token}`
         }

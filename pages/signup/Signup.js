@@ -43,7 +43,7 @@ const SignupScreen = () => {
         }
 console.log(data);
 
-        axios.post("http://172.17.0.1:8000/api/signup", data)
+        axios.post("https://kushal-backend.onrender.com/api/signup", data)
             .then((response) => {
   
                 if (response.data) {
