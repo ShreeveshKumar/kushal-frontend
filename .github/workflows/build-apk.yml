@@ -1,4 +1,4 @@
-name: EAS Build
+name: EAS Android Build & Release
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Install and build Android
+    name: Build Android APK
     runs-on: ubuntu-latest
 
     steps:
@@ -27,10 +27,23 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
 
-      - name: Build on EAS (Android only)
+      - name: Build APK on EAS
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: npx eas-cli build --platform android --non-interactive --no-wait
+        run: npx eas-cli build --platform android --profile production --non-interactive --no-wait
+
+      - name: Get Build URL
+        run: |
+          BUILD_URL=$(npx eas-cli build:list --json | jq -r '.[0].artifacts.buildUrl')
+          echo "BUILD_URL=$BUILD_URL" >> $GITHUB_ENV
+
+      - name: Upload APK to GitHub Releases
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          files: ${{ env.BUILD_URL }}
+          token: ${{ secrets.GH_PAT }}  # Using GH_PAT instead of GITHUB_TOKEN
+          generate_release_notes: true
