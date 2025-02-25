@@ -3,8 +3,8 @@ name: Build and Release APK
 on:
   push:
     branches:
-      - main  # Change if using a different branch
-  workflow_dispatch:  # Allows manual triggering
+      - master  
+  workflow_dispatch:  
 
 jobs:
   build:
