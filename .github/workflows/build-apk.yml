@@ -1,9 +1,7 @@
-name: EAS Build
-
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
@@ -18,14 +16,23 @@ jobs:
           node-version: 18
           cache: 'npm'
 
+      - name: Configure npm global path
+        run: |
+          npm config set prefix ~/.npm-global
+          echo "export PATH=\"$HOME/.npm-global/bin:$PATH\"" >> $HOME/.bashrc
+          source $HOME/.bashrc
+
       - name: Install dependencies
         run: npm install
 
       - name: Install EAS CLI
-        run: npm install -g eas-cli
+        run: npm install -g eas-cli --unsafe-perm=true
+
+      - name: Verify EAS CLI installation
+        run: eas --version
 
       - name: Authenticate with EAS
         run: eas login --token ${{ secrets.EAS_ACCESS_TOKEN }}
 
       - name: Build Android AAB
-        run: eas build -p android --profile production --clear-cache
+        run: npx eas build -p android --profile production --clear-cache
