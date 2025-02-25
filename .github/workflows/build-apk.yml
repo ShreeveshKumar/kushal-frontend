@@ -1,62 +1,43 @@
-name: EAS Android Build & Release
+name: Build and Release APK
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - master
+      - main  # Change if using a different branch
+  workflow_dispatch:  # Allows manual triggering
 
 jobs:
   build:
-    name: Build Android APK
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
-          cache: npm
-
-      - name: Setup Expo and EAS
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
+          node-version: 18
+          cache: 'npm'
 
       - name: Install Dependencies
-        run: npm ci
-
-      - name: Build APK on EAS
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: npx eas-cli build --platform android --profile production --non-interactive --no-wait
+        run: npm install
 
       - name: Authenticate with Expo
-        run: echo "EXPO_TOKEN=${{ secrets.EAS_TOKEN }}" >> $GITHUB_ENV
+        run: echo "EXPO_TOKEN=${{ secrets.EXPO_TOKEN }}" >> $GITHUB_ENV
 
-      - name: Get Latest Build URL
+      - name: Build APK with EAS
+        run: npx eas-cli build --platform android --non-interactive --profile production
+
+      - name: Get Build URL
         run: |
-          BUILD_LIST=$(npx eas-cli build:list --json)
-          
-          if [ "$(echo "$BUILD_LIST" | jq length)" -eq 0 ]; then
-            echo "No builds found! Exiting."
-            exit 1
-          fi
-          
-          BUILD_ID=$(echo "$BUILD_LIST" | jq -r '.[0].id')
-          BUILD_URL=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
-
+          BUILD_URL=$(npx eas-cli build:list --json | jq -r '.[0].artifacts.buildUrl')
           echo "BUILD_URL=$BUILD_URL" >> $GITHUB_ENV
 
-
-      - name: Upload APK to GitHub Releases
-        uses: softprops/action-gh-release@v1
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          files: ${{ env.BUILD_URL }}
-          token: ${{ secrets.GH_PAT }}  # Using GH_PAT instead of GITHUB_TOKEN
-          generate_release_notes: true
+          name: app-release-apk
+          path: ${{ env.BUILD_URL }}
+
+      - name: Notify Build URL
+        run: echo "✅ Build complete! Download APK: $BUILD_URL"
