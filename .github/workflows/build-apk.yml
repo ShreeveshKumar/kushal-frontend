@@ -35,16 +35,20 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: npx eas-cli build --platform android --profile production --non-interactive --no-wait
 
-      - name: Get Build URL
+      - name: Get Latest Build URL
         run: |
-          BUILD_ID=$(npx eas-cli build:list --json | jq -r '.[0].id')
-          if [ -z "$BUILD_ID" ]; then
+          npx eas-cli login --token ${{ secrets.EAS_TOKEN }}
+          BUILD_LIST=$(npx eas-cli build:list --json)
+          
+          if [ "$(echo "$BUILD_LIST" | jq length)" -eq 0 ]; then
             echo "No builds found! Exiting."
             exit 1
           fi
+          
+          BUILD_ID=$(echo "$BUILD_LIST" | jq -r '.[0].id')
           BUILD_URL=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
-          echo "BUILD_URL=$BUILD_URL" >> $GITHUB_ENV
 
+          echo "BUILD_URL=$BUILD_URL" >> $GITHUB_ENV
 
       - name: Upload APK to GitHub Releases
         uses: softprops/action-gh-release@v1
