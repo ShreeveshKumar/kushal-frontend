@@ -37,8 +37,14 @@ jobs:
 
       - name: Get Build URL
         run: |
-          BUILD_URL=$(npx eas-cli build:list --json | jq -r '.[0].artifacts.buildUrl')
+          BUILD_ID=$(npx eas-cli build:list --json | jq -r '.[0].id')
+          if [ -z "$BUILD_ID" ]; then
+            echo "No builds found! Exiting."
+            exit 1
+          fi
+          BUILD_URL=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
           echo "BUILD_URL=$BUILD_URL" >> $GITHUB_ENV
+
 
       - name: Upload APK to GitHub Releases
         uses: softprops/action-gh-release@v1
