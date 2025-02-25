@@ -15,8 +15,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.client"
-
+      "bundleIdentifier": "com.anonymous.client",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "com.carcare.client",
@@ -24,7 +26,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-     "versionCode": 2,
       "useCleartextTraffic": true 
     },
     "web": {
