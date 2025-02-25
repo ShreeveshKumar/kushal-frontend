@@ -16,7 +16,9 @@
       }
     },
     "production": {
-      "android": {}
+      "android": {
+        "autoIncrement": true
+      }
     }
   },
   "submit": {

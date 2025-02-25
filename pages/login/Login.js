@@ -28,7 +28,7 @@ const LoginScreen = () => {
         }
         const data = { email, password, role };
         try {
-            const response = await axios.post('https://kushal-backend.onrender.com/api/login', data);
+            const response = await axios.post('http://172.16.135.1:8000/api/login', data);
             console.log(response.data);
             if (response.data.success) {
                 const userObject = {
