@@ -33,5 +33,4 @@ jobs:
       - name: Build on EAS
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: npx eas build --platform android --non-interactive --no-wait
-
+        run: npx eas-cli build --platform all --non-interactive --no-wait
