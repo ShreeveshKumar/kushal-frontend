@@ -57,7 +57,14 @@ const CreditCardUI = () => {
                             backfaceVisibility: 'hidden'
                         }
                     ]}>
-                        <Text style={tw`text-white text-sm font-bold p-10`}>Your Current Balance is Rs1000</Text>
+                       <View style={tw`w-full `}>
+
+<View>
+    <Text style={tw`text-white text-center `}>Coupons available </Text>
+</View>
+
+
+                       </View>
                     </Animated.View>
                 </View>
             </TouchableOpacity>

@@ -6,14 +6,18 @@ import axios from "axios";
 import { useUserrole } from "hooks/useUserrole";
 
 const PaymentcontinueScreen = ({ route }) => {
-    const { amount } = route.params;
+    const { amount, type } = route.params;
+    console.log(amount,type);
+    
     const [userinfo, setuserinfo] = useState("");
     const { data, isLoading, error } = useUserrole();
+    console.log(data);
+    
 
 
     async function fetchUser() {
         try {
-            const response = await axios.get("http://172.16.135.1:8000/api/get-info-owner", {
+            const response = await axios.get("http://172.17.0.1:8000/api/get-info-owner", {
                 headers: {
                     Authorization: `Bearer ${data.token}`,
                 },
@@ -33,7 +37,7 @@ const PaymentcontinueScreen = ({ route }) => {
 
     return (
         <View style={styles.container}>
-            <WebView source={{ uri: `http://172.16.135.1:8000/pay?amount=${amount}&name=${userinfo.username}&email=${userinfo.email}&phone=${userinfo.phone}` }} />
+            <WebView source={{ uri: `http://172.17.0.1:8000/pay?amount=${amount}&type=${type}&name=${userinfo.username}&email=${userinfo.email}&phone=${userinfo.phone}` }} />
         </View>
     )
 }

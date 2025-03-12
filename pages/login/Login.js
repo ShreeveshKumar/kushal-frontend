@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -13,6 +13,7 @@ import { CheckBox } from 'react-native-elements';
 import axios from 'axios';
 import tw from 'twrnc';
 import Toast from 'react-native-toast-message';
+import * as SecureStore from 'expo-secure-store';
 
 const LoginScreen = () => {
     const [email, setEmail] = useState('');
@@ -21,6 +22,30 @@ const LoginScreen = () => {
     const [isOwner, setOwner] = useState();
     const navigation = useNavigation();
 
+
+    // useEffect(() => {
+
+    //     const credentials = await Keychain.getGenericPassword();
+    //     console.log("Saved User:", credentials);
+    // })
+
+    
+    async function getSecureData() {
+        try {
+            const data = await SecureStore.getItemAsync("user");
+            console.log("now the data is ", data);
+            return data ? JSON.parse(data) : null;
+        } catch (error) {
+            console.error("Error retrieving data:", error);
+            return null;
+        }
+    }
+
+
+    useEffect(() => {
+        getSecureData();
+    })
+
     const handleEmailLogin = async () => {
         if (!email || !password || !role) {
             Alert.alert('Error', 'Please fill in all fields');
@@ -28,7 +53,7 @@ const LoginScreen = () => {
         }
         const data = { email, password, role };
         try {
-            const response = await axios.post('http://172.16.135.1:8000/api/login', data);
+            const response = await axios.post('http://192.168.29.141:8000/api/login', data);
             console.log(response.data);
             if (response.data.success) {
                 const userObject = {
@@ -45,6 +70,8 @@ const LoginScreen = () => {
                 });
 
                 await AsyncStorage.setItem('user', JSON.stringify(userObject));
+                console.log(userObject);
+                await saveUser(userObject);
                 navigation.navigate("HomeScreen");
             } else {
                 Alert.alert('Login Failed', response.data.error || 'Invalid credentials');
@@ -55,6 +82,23 @@ const LoginScreen = () => {
 
         }
     };
+
+
+
+    async function saveUser(userObject) {
+        console.log("saving this data", userObject);
+
+        try {
+            const userString = JSON.stringify(userObject);
+            await SecureStore.setItemAsync("user", userString, {
+                keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY
+            });
+            console.log("User data saved securely!");
+        } catch (error) {
+            console.error("Error saving user data:", error);
+        }
+    }
+
 
     return (
         <View style={tw`flex-1 justify-center items-center p-5 bg-white`}>

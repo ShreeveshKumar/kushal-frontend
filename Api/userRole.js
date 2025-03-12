@@ -1,13 +1,17 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from 'expo-secure-store';
 
 const getUserRole = async () => {
     try {
-        const user = await AsyncStorage.getItem("user");
-        const userInfo = JSON.parse(user);
-        return userInfo;
+        const data = await SecureStore.getItemAsync("user");
+        console.log("this is the data", data);
+        if (!data) {
+            return null;
+        }
+        return JSON.parse(data);
     } catch (error) {
-        console.log(error.message);
+        console.log("this is the error", error.message);
+        return null;
     }
-}
+};
 
-export default getUserRole; 
+export default getUserRole;

@@ -5,7 +5,7 @@ import { WebView } from 'react-native-webview';
 const FeedbackScreen = () => {
     return (
         <View style={styles.container}>
-            <WebView source={{ uri: 'http://192.168.28.243:8000/rating' }} />
+            <WebView source={{ uri: 'http://192.168.29.141:8000/rating' }} />
         </View>
     );
 };

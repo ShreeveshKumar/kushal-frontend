@@ -1,9 +1,10 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 
 const api = axios.create
     ({
-        baseURL: process.env.BASE_URL ,
+        baseURL: process.env.BASE_URL,
         timeout: 10000,
         headers: {
             "Content-Type": "application/json",
@@ -12,17 +13,14 @@ const api = axios.create
 
 api.interceptors.request.use(
     async (config) => {
-        const user = await AsyncStorage.getItem("user");
-
+        const userdata = await SecureStore.getItemAsync("user");
+        const user = JSON.parse(userdata) || null;
+        
         if (user) {
-            const userinfo = JSON.parse(user);
-            console.log("token found",userinfo.token);
-            
-
-            if (userinfo.token) {
-                config.headers.Authorization = `Bearer ${userinfo.token}`;
+            console.log("token found", user.token);
+            if (user.token) {
+                config.headers.Authorization = `Bearer ${user.token}`;
             }
-
         }
 
         return config;

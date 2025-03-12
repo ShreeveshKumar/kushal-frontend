@@ -2,7 +2,7 @@
   "expo": {
     "name": "client",
     "slug": "client",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -14,12 +14,12 @@
       "backgroundColor": "#ffffff"
     },
     "android": {
-      "package": "com.carcare.client",
+      "package": "com.carcareclient.user2",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "versionCode": 2,
+      "versionCode": 5,
       "useCleartextTraffic": true
     },
     "web": {
@@ -27,8 +27,12 @@
     },
     "extra": {
       "eas": {
-        "projectId": "173b14ac-2a71-4730-a4ce-89440a73e67a"
+        "projectId": "b22fddbf-f441-4bd3-a02b-173b3eb9b876"
       }
-    }
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-font"
+    ]
   }
 }

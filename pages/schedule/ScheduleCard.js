@@ -13,7 +13,7 @@ const ScheduleCard = () => {
             try {
                 const token = await AsyncStorage.getItem("user");
                 const user = JSON.parse(token);
-                const response = await axios.get("http://172.16.135.1:8000/api/user/get-tasks", {
+                const response = await axios.get("http://172.17.0.1:8000/api/user/get-tasks", {
                     headers: {
                         Authorization: `Bearer ${user.token}`,
                     },

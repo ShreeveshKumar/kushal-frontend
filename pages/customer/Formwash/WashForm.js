@@ -57,7 +57,7 @@ function WashForm() {
         try {
             const token = await AsyncStorage.getItem(("user"));
             const userinfo = JSON.parse(token);
-            const response = await axios.get("http://172.16.135.1:8000/api/vehicle/getvehicle", {
+            const response = await axios.get("http://172.17.0.1:8000/api/vehicle/getvehicle", {
                 headers: {
                     Authorization: `Bearer ${userinfo.token}`
                 }
@@ -82,7 +82,7 @@ function WashForm() {
 
             const token = await AsyncStorage.getItem(("user"));
             const user = JSON.parse(token);
-            const response = await axios.get("http://172.16.135.1:8000/api/get-info-owner", {
+            const response = await axios.get("http://172.17.0.1:8000/api/get-info-owner", {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
                 },

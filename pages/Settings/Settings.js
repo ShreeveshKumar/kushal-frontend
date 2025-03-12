@@ -179,7 +179,7 @@ const Settings = () => {
                     <Animated.View
                         style={[tw`bg-gray-50 p-4 rounded-lg mt-2`, { opacity: fadeAnim }]}
                     >
-                        <TouchableOpacity onPress={() => navigation.navigate("FeedbackScreen")}>
+                        <TouchableOpacity onPress={() => navigation.navigate("DeleteAccount")}>
                             <Text style={tw`text-base`}>Delete Account</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => navigation.navigate("FAQScreen")}>

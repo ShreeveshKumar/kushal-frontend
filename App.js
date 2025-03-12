@@ -6,6 +6,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// import { FadeIn, FadeOut } from 'react-native-reanimated';
 
 import LoginScreen from '@pages/login/Login';
 import Signup from '@pages/signup/Signup';
@@ -26,11 +27,41 @@ import FAQScreen from '@pages/FAQ/faq';
 import AddVehicleScreen from '@pages/vehicle/vehicleadd';
 import PaymentcontinueScreen from '@pages/customer/Balance/PaymentScreen';
 import TaskView from '@pages/schedule/Taskupdate';
+import DeletePage from '@pages/Delete/DeleteAccount';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 const queryClient = new QueryClient();
+
+// const transitionConfig = {
+//   gestureEnabled: true,
+//   transitionSpec: {
+//     open: {
+//       animation: 'timing',
+//       config: {
+//         duration: 500,
+//       },
+//     },
+//     close: {
+//       animation: 'timing',
+//       config: {
+//         duration: 500,
+//       },
+//     },
+//   },
+//   cardStyleInterpolator: ({ current, next, layouts }) => {
+//     const progress = Animated.add(current.progress, next ? next.progress : 0);
+//     return {
+//       cardStyle: {
+//         opacity: progress.interpolate({
+//           inputRange: [0, 1],
+//           outputRange: [0, 1],
+//         }),
+//       },
+//     };
+//   },
+// };
 
 function CustomerHomeStack() {
   return (
@@ -75,13 +106,16 @@ function ScheduleStack() {
 
 function SettingsStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{
+      headerShown: false,
+    }}>
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="UserProfile" component={UserProfile} />
       <Stack.Screen name="FeedbackScreen" component={FeedbackScreen} />
       <Stack.Screen name="FAQScreen" component={FAQScreen} />
       <Stack.Screen name="Addcar" component={AddVehicleScreen} />
       <Stack.Screen name="Viewcar" component={Vehiclelist} />
+      <Stack.Screen name="DeleteAccount" component={DeletePage} />
     </Stack.Navigator>
   );
 }
@@ -129,11 +163,11 @@ function CustomRootTabs() {
   return (
     <>
       <Stack.Navigator initialRouteName='Loader' screenOptions={{
+        // ...transitionConfig,
         headerShown: false
       }}>
-        <Stack.Screen name="Addcar" component={AddVehicleScreen} />
-
         <Stack.Screen name="Loader" component={LoaderScreen} />
+        <Stack.Screen name="Addcar" component={AddVehicleScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="HomeScreen" component={RootTabs} />
